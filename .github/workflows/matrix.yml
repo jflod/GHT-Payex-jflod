@@ -1,10 +1,15 @@
 name: Deploy Workflow
 
 on:
-  workflow_dispatch:
   push:
-    branches:
-      - main
+   branches: [ main ]
+   
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        type: environment
+        required: true
 
 jobs:
   deploy:
@@ -21,12 +26,13 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Deploy to ${{ matrix.environment }}
+        if: matrix.environment == 'Test'
         run: |
           # Add your deployment steps here
           echo "Deploying to ${{ matrix.environment }}"
 
       - name: Notify Deployment Status
-        if: matrix.environment == 'production'
+        if: matrix.environment == 'Production'
         run: |
           # Add notification steps for production deployment completion
           echo "Production deployment completed"
