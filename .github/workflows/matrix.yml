@@ -1,0 +1,33 @@
+name: Deploy Workflow
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        environment:
+          - Test
+          - Production
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Deploy to ${{ matrix.environment }}
+        run: |
+          # Add your deployment steps here
+          echo "Deploying to ${{ matrix.environment }}"
+
+      - name: Notify Deployment Status
+        if: matrix.environment == 'production'
+        run: |
+          # Add notification steps for production deployment completion
+          echo "Production deployment completed"
+
