@@ -1,0 +1,46 @@
+name: Build and Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment (Dev, Test, Production)'
+        required: true
+        default: 'Dev'
+
+jobs:
+  common-build:
+    runs-on: ubuntu-latest
+    outputs:
+      env: 
+        set: ${{ hashFiles('**/*.txt') }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Create Dummy Text File
+        run: echo "This is a dummy text file" > dummy.txt
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: build-artifact-${{ hashFiles('**/*.txt') }}
+          path: dummy.txt
+
+  deploy:
+    needs: common-build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Download Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: build-artifact-${{ hashFiles('**/*.txt') }}
+          path: .
+
+      - name: Deploy to ${{ github.event.inputs.environment }}
+        run: echo "Deploying to ${{ github.event.inputs.environment }}"
+
+# Add more deploy jobs for different environments if needed
