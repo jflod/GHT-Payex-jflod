@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Environment (Dev, Test, Production)'
+        description: 'Environment to deploy to'
+        type: environment
         required: true
-        default: 'Dev'
 
 jobs:
   common-build:
